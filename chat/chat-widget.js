@@ -14,7 +14,8 @@
   "use strict";
 
   var LOCAL_API_URL = "http://localhost:3001";
-  var PRODUCTION_API_URL = "https://YOUR-BACKEND-URL.example.com"; // TODO: set before deploying
+  // Hardcoded on purpose: this is a static site with no build step, so Vercel env vars never reach it.
+  var PRODUCTION_API_URL = "https://superiorbrassbackapi-production.up.railway.app";
 
   var isLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   var API_URL = (isLocal ? LOCAL_API_URL : PRODUCTION_API_URL).replace(/\/$/, "");
