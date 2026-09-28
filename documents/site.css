@@ -1,0 +1,1075 @@
+/* ====== CSS Variables ====== */
+/* TODO: use css variables to define our core colours */
+:root {
+  --theme-primary: #303133;
+  --theme-alternate: #303133;
+  --swiper-navigation-color: #fff;
+  --swiper-pagination-color: #fff;
+  --swiper-pagination-bullet-inactive-color: #303133;
+  --swiper-pagination-bullet-inactive-opacity: 0.6;
+  
+}
+
+
+@font-face {
+	font-family: 'Akrobat-Light';
+	src:  url('fonts/akrobat-light.woff2') format('woff2');
+	font-weight: 300;
+}
+
+@font-face {
+	font-family: 'Akrobat-Regular';
+	src:  url('fonts/akrobat-regular.woff2') format('woff2');
+	font-weight: 400;
+}
+
+@font-face {
+	font-family: 'Akrobat-Bold';
+	src:  url('fonts/akrobat-bold.woff2') format('woff2');
+	font-weight: 600;
+}
+
+/* usage: var(--theme-primary) */
+
+
+/* ====== Global Styles ====== */
+
+/* Set Print size to override Bootstrap print view being shown as mobile */
+@media print {
+	@page {
+		size: 330mm 427mm;
+		margin: 14mm;
+	}
+	.container, .container-fluid {
+		width: 1170px;
+	}
+}
+
+hr {
+	width:100%;
+	margin-top:0.5rem;
+	margin-bottom:0.75rem; /*matches table header spacing*/
+}
+body{
+	display:flex;
+	min-height:100vh;
+	flex-direction:column;
+	min-width:350px;
+	font-family: 'Akrobat-Regular';
+}
+.flex-spacer{
+	flex-grow:1;
+}
+
+
+/* thinner card guttering than bootstrap's default because we use cards in much smaller spacings */
+.card-deck{
+	margin-right:-5px;
+	margin-left:-5px;
+	flex-flow:row wrap;
+}
+.card-deck .card{
+	margin-left:5px;
+	margin-right:5px;
+	height:100%;
+	margin-bottom:0px;
+}
+.card-deck > div{
+	margin-bottom:0.5rem;
+}
+.card-body {
+	display:flex;
+	flex-direction:column;
+	align-items:stretch;
+	text-align:center;
+}
+
+/* ------ Text Styling ------ */
+.h1, h1 { /* major title of the page */
+	font-size: 50px;
+	color: #303133;
+	font-family: Akrobat-Light;
+}
+.h2, h2 { /* subheadings in copy pages */
+	font-size: 40px;
+	color: #303133;
+	font-family: Akrobat-Light;
+
+}
+.h3, h3 { /* interface heading */
+	font-size: 30px;
+	color: #303133;
+	font-family: Akrobat-Light;
+}
+.h4, h4 { /* Major product labels, copy page minor labels */
+	font-size: 20px;
+	color: #303133;
+	font-family: Akrobat-Light;
+}
+.h5, h5 { /* not actually used but available for customisations and copy */
+	font-size: 1rem;
+	font-style: italic;
+	color: #303133;
+	font-family: Akrobat-Light;
+}
+a, .page-link{
+	color: #6d3d4e;
+	text-decoration: none;
+	transition: all 0.5s ease;
+}
+
+a:hover, .page-link:hover{
+	color: #341d25;
+}
+
+.nav-link {
+	letter-spacing:1px;
+}
+.card-title {
+	margin: 0.75rem 0rem;
+}
+.col-form-label{
+	font-weight: 600;
+}
+
+.form-label {
+	font-weight: 600;
+}
+
+.form-control-plaintext {
+	width: auto; /* Overrides the width 100% in Bootstrap 5 for Single Page Checkout etc */
+}
+
+.form-control:read-only {
+	background-color: #e9ecef;
+	pointer-events: none;
+}
+
+.form-heading {
+	color: #303133;
+}
+
+strong, b, th, .table.dataTable tr.totalsRow td {
+	font-family: 'Akrobat-Bold';
+}
+
+/* ------ Buttons ------ */
+.btn-primary {
+	background-color: #303133;
+    border-color: #303133;
+}
+.btn-primary:hover, .btn-primary:focus+.btn, .btn-primary:focus  {
+	background-color: #fff;
+    border-color: #303133;
+	color: #303133;
+}
+
+.btn-light {
+	background-color: #fff;
+	border-color: #ced4da;
+}
+
+.btn-cart {
+	width:130px;
+}
+
+.btn-am {
+	background-color: #303133;
+	border-color: #303133;
+	color: #ffffff;
+}
+.btn-am:hover {
+	background-color: #0085a7;
+	border-color: #303133;
+	color: #ffffff;
+}
+
+/* Active classes */
+.list-group-item.active, .page-item.active .page-link, .dropdown-item.active, .dropdown-item:active {
+	background-color: transparent;
+	border-color: #dfdfdf;
+	color: #141618;
+	font-weight: 600;
+}
+
+/* ------ Messaging ------ */
+.alert-info {
+    color: #303133;
+    background-color: hsl(220 3% 86% / 1);
+    border-color: #303133;
+}
+
+/* ------ Misc ------- */
+.list-group-item{
+	border: 1px dotted #dfdfdf;	
+}
+.breadcrumb {
+	font-size: 0.75rem;
+	letter-spacing: 1px;
+}
+
+#captcha {
+    text-transform: uppercase;
+}
+
+
+/* ====== Location Specific Styles ====== */
+
+/* ------ Container Styling ------ */
+
+.fluid-restricted{
+	max-width:1500px;
+}
+.form-restricted{
+	max-width:650px;
+}
+
+.footer-navigation .fluid-restricted {
+	max-width: 1200px;
+}
+
+/* ------ Header Common & Mobile Styling ------ */
+
+@media (max-width: 991px) {
+	.header-content {
+		text-align: center;
+	}
+	
+	/*
+	#admin-menu-mobile {
+		display: none!important;
+	}
+	*/
+}
+@media (min-width: 992px) {
+	.header {
+		background:#ffffff;
+		border-bottom: 1px solid rgba(48,49,51,0.3);
+		box-shadow: 0 4px 10px -10px rgba(0, 0, 0, 0.6);
+		/*position: sticky;
+		top: 0;
+		z-index: 999;
+		border-bottom: 3px solid #303133;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16), 0 2px 3px rgba(0, 0, 0, 0.12); */
+	}
+	.header-content {
+		min-height: 204px;
+	}
+}
+
+/* Header Navigation */
+
+.header-content .nav-link {
+	color: #303133;
+	text-transform: uppercase;
+	font-size: 18px;
+	transition: all 0.5s ease;
+	padding: 1rem 0rem;
+}
+
+
+.header-content .nav-link:not(:last-child) {
+	margin-right: 3rem;
+}
+
+@media (min-width: 1200px) {
+	.header-content .nav-link:not(:last-child) {
+		margin-left: 3rem;
+	}
+}
+
+.header-content .nav-link:hover,
+.header-content .nav-link.active {
+	opacity: 0.5;
+}
+
+/* Account Manager Dropdown Menu */
+
+@media (max-width: 991px) {
+	.dropdown-header{
+		padding: var(--bs-list-group-item-padding-y) var(--bs-list-group-item-padding-x);
+		font-size: 1rem;
+		font-weight: 600;
+	}
+}
+
+/* ------ Logo Styling ------ */
+
+#company-logo {
+	transition: all 0.5s ease;
+	width: 570px;
+}
+
+#company-logo:hover {
+	opacity: 0.8;
+}
+
+/* ------ Wholesale Styling ------ */
+.wholesale{
+	width:100%;
+	max-width:600px;
+	margin:auto;
+}
+
+/* ------ Main Menu Styling ------ */
+
+@media (max-width: 991px) {
+	.nav-menu {
+		background:#ffffff;
+		position: sticky;
+		top: 0;
+		z-index: 999;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16), 0 2px 3px rgba(0, 0, 0, 0.12);
+		max-height: 75vh;
+	}
+}
+
+.main-menu-desktop .nav-link {
+	color: #303133;
+	margin: 0rem 0.5rem;
+	text-transform: uppercase;
+	font-size: 18px;
+}
+
+.main-menu-desktop .nav-link:hover, 
+.main-menu-desktop .nav-link.active {
+	opacity: 0.5;
+}
+
+/* Mobile Styling */
+
+.mobile-menu-text {
+	font-size: 1rem;
+	letter-spacing: 1px;
+}
+.mobile-menu-button {
+	flex-grow:1;
+	text-align:center;
+	-webkit-appearance: none; /* iOS Fix */
+	border-radius:0;
+	background-color: var(--theme-alternate);
+	border: 1px solid #393a3c;
+	text-decoration: none;
+	color: #fff;
+}
+
+.mobile-menu-button:hover {
+	color: #fff;
+}
+
+.mobile-menu-button:focus {
+	box-shadow: none;
+}
+
+@media (max-width: 991px) {
+	.search-container {
+		padding: 20px;
+	}
+	#main-nav {
+		padding: 0px;
+	}
+}
+@media (min-width: 992px) {
+	#desktop-nav .nav-link {
+		padding-right: 1rem;
+		padding-left: 1rem;
+	}
+}
+
+/* old bad 'mega' menu */
+.show>.product-2col{
+	display:flex;
+	flex-direction:row;
+	flex-wrap:wrap;
+	width:550px;
+}
+.product-2col a{
+	flex:0 0 50%;
+}
+.show>.product-3col{
+	display:flex;
+	flex-direction:row;
+	flex-wrap:wrap;
+	width:800px;
+}
+.product-3col a{
+	flex:0 0 33.3%;
+}
+
+/* container-sm used to remove padding when in mobile, useful for mobile navigation */
+.container-fluid-sm {
+	width: 100%;
+	padding-left: 15px;
+	padding-right: 15px;
+	margin-left: auto;
+    margin-right: auto;
+}
+@media (max-width: 991px) {
+	.container-fluid-sm{
+		padding-left: 0px;
+		padding-right: 0px;
+	}
+}
+
+/* ------ Main Content ------ */
+.content-container {
+	margin-top:1rem;
+	margin-bottom:1rem;
+}
+
+/* Zippay / Afterpay / PayPal */
+
+#zip-product-widg {
+	padding: 0px;
+}
+
+.afterpay-details {
+	margin-bottom: 5px;
+}
+
+.afterpay-line {
+	min-height:49px;
+	font-size: 14px;
+}
+
+.afterpay-list {
+	min-height: 72px;
+	font-size:14px;
+}
+
+.afterpay-view-more {
+	font-size: 11px;
+}
+
+.afterpay-payment-image, .paypal-payment-image {
+	height:22px;
+	vertical-align:middle;
+}
+
+.zip-payment-image {
+	height: 28px;
+	vertical-align:middle;
+}
+
+.zip-container .zip-logo {
+	margin-left: -5px !important;
+}
+
+/* ------ Filter & Category Sidebar ------ */
+
+.sidebar-component{
+	margin-bottom:.5rem;
+}
+
+.sidebar-component .list-group-item:hover {
+	text-decoration: none;
+}
+
+.sidebar-container .list-group-item {
+	color: #595959;
+	padding: 0.5rem 0.5rem;
+}
+
+.sidebar-section-title {
+	padding: 8px 8px 8px 8px;
+    font-size: 20px;
+    font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+.sidebar-section-title > a {
+	color: var(--bs-body-color);
+}
+
+.sidebar-filter-title {
+	padding: 8px 8px 8px 8px;
+	font-weight: 600;
+	color: #212529;
+}
+
+.sidebar-filter > a {
+	width: fit-content;
+}
+
+.no-filter {
+	padding: 8px 8px 8px 8px;
+	font-weight: 400;
+	font-size: 0.9rem;
+	color: #595959;
+}
+
+.menu-icon .fa-check-square {
+    color: #43A047;
+}
+
+.menu-icon .fa-times-circle {
+    color: #c31d2b;
+}
+
+.category1-text, .category2-text, .category3-text{
+	margin-right:10px; 
+}
+
+.sidebar-container .menu-icon, 
+.sidebar-container .menu-item, 
+.sidebar-container .dropdown-menu,
+.category1-text {
+	/* font-size: 14px; */
+}
+
+.category2-text {
+	padding-left: 10px;
+	font-size: 0.9rem;
+}
+
+.category3-text {
+	padding-left: 20px;
+	font-size: 0.8rem;
+}
+
+.category-icon {
+	position:absolute;
+	top:calc(50% - 10px);
+	right:12px;
+	color: rgba(0, 0, 0, 0.35);
+	font-size: 12px;
+}
+
+.mobile-category-expand {
+	font-size: 0.8rem;
+}
+
+/* ------ Cart ------ */
+.fullCart th, .fullCart td{
+	vertical-align: inherit;
+}
+.removeCart{
+	text-align:center;
+}
+.cartsummary_controls .btn {
+	min-width: 130px;
+}
+.savecart_controls{
+	width: 300px;
+}
+.cart_mobiledetails {
+	font-size: 0.8rem;
+}
+@media (max-width: 767px) {
+	.cartsummary_controls, .savecart_controls {
+		width: 100%;
+		max-width: 300px;
+	}
+	.cartsummary_controls .btn{
+		width: 100%;
+	}
+}
+.fullcart-total {
+    text-align: right;
+    font-weight: 600;
+	margin-bottom: 0.5em;
+	padding-right: 12px;
+}
+
+.cart-warning-container {
+	z-index: 5;
+    bottom: 20px;
+    left: 20px;
+}
+.toast {
+	width: 30vw;
+    min-width: 300px;
+	max-width:unset;
+	background-color: #FFF;
+}
+.toast-header {
+	background-color: var(--theme-primary);
+	color: #FFF;
+}
+.toast-header .close {
+	color: #FFF;
+}
+/* ------ Product List ------ */
+.pl-container {
+	display:grid;
+}
+.sortby, .viewas, .itemsperpage, .pagination, #blogCategoryWrapper, #blogSearchWrapper {
+	margin-bottom:0.5rem;
+}
+
+.product-grid {
+	display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
+	grid-row-gap:0.5rem;
+	margin-bottom:0.5rem;
+}
+
+.productlist {
+	margin-bottom:0.5rem;
+}
+
+/* Product Display */
+.product-image-card{
+	object-fit:contain;
+	height:250px;
+	max-width:100%;
+}
+.product-image-list{
+	object-fit:contain;
+	min-height:150px;
+	max-height:200px;
+	max-width:100%;
+	display:block;
+	margin:auto;
+}
+.product-image-detail-primary {
+	width:100%;
+	object-fit:contain;
+	max-height:450px;
+}
+.product-image-detail-secondary {
+	object-fit:contain;
+	max-height:100px;
+	display:block;
+	margin:auto;
+}
+.product-image-line {
+	width:100px;
+	object-fit:contain;
+	height:100px;
+}
+
+.cart-alignment {
+	/*width and placing of the cart widget and anything that needs to follow it */
+	width:100%;
+	max-width:225px;
+}
+
+.card .cart-alignment {
+	margin:auto;
+	max-width:180px;
+	float:none;
+}
+
+@media (min-width: 1200px) {
+	#productDetailWrapper .cart-alignment {
+		float: right;
+	}
+}
+
+.cart-widget button {
+	width:45px;
+}
+.cart-column {
+	min-width:195px;
+}
+
+@media (min-width: 576px) {
+	.productlist .cart-alignment {
+		margin-left: auto;
+	}
+}
+/*
+
+@media (max-width: 575px) {
+	.product-image-line {
+		width:40px;
+		object-fit:contain;
+		height:40px;
+	}
+}
+
+
+@media (max-width: 991px) {
+	.productlist .cart-alignment {
+		max-width:120px;
+	}
+	.cart-column {
+		min-width:initial;
+	}
+}
+*/
+.list-cart{
+	/*margin:auto;*/
+	max-width:360px;
+}
+.list-cart p{
+	margin-bottom:0.25rem;
+}
+.gallery-cart{
+	min-height:42px;
+}
+
+.price{
+	font-weight: 600;
+	font-size:1.25rem;
+	margin-bottom:0.25rem;
+}
+.gst-text{
+	/* nothing yet */
+}
+
+/* ------ Checkout ------ */
+.tracker-links{
+	position: absolute;
+	top: 0;
+	width: 100%;
+}
+
+.progress-tracker .progress {
+    margin: 47px 0 0 0;
+    height: 7px;
+}
+
+.tracker-content{
+	text-align: center;
+	color: #8bb9c4; /* Progess bar icon background */
+}
+
+.progress-bar {
+	background-color: var(--theme-primary); /* Progress bar color */
+}
+
+.progress-tracker a {
+	color: var(--theme-alternate); /* Progress bar link */
+}
+
+.FatZebraFrame {
+    max-width:500px;
+    width:100%;
+    height: 530px;
+}
+@media screen and (max-width: 414px) {
+    .FatZebraFrame {
+        height: 550px;
+    }
+}
+
+/* ------ Footer Styles ------ */
+.footer-navigation{
+	background-color: #f7f7f7;
+	color: #141618; /* Footer text. Background will differ from website body so font colour/opacity will need adjustment */
+	font-family: 'Akrobat-Light';
+	padding-top: 144px;
+}
+.footer-navigation a {
+	color: #303133;
+	transition: all 0.5s ease;
+	width:fit-content;
+}
+.footer-navigation a:hover {
+	color: #303133;
+	opacity: 0.7;
+}
+
+@media (max-width: 991px) {
+	.footer-navigation {
+		text-align: center;
+	}
+	.footer-address {
+		padding: 0rem 1rem;
+	}
+	.footer-address .contact-links a{
+		margin:auto;
+	}
+	.footer-right-column {
+		align-items: center;
+		padding: .5rem 1rem 0rem 1rem
+	}
+	.social-icons {
+		margin: .5rem 0rem;
+	}
+	.payment-icons > div {
+		justify-content: center;
+	}
+}
+
+.payment-icons {
+	color: #303133;
+}
+
+.footer-navigation .navbar-expand-lg .navbar-nav .nav-link, 
+.footer-navigation .nav-link {
+	padding: .25rem 0 .25rem 0; /* reduce vertical and horizontal padding for footer links */
+	margin: 0rem 2rem;
+}
+
+.footer-navigation .fa-stack {
+	width: 2em; /* Unifies footer icon spacing */
+}
+
+.footer-right-column {
+	flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+}
+.footer-right-column > div, .footer-text-area p{
+	margin-bottom:0.5rem;
+}
+
+#mce-EMAIL::placeholder,#mce-EMAIL:focus,#mce-EMAIL{
+	background:transparent;
+	color:#141618;
+}
+.footer-text-area p:last-of-type { /* Removes spacing of text so icons control it */
+	margin: 0px;
+}
+
+.social-icons a {
+	color: #303133;
+	transition: all 0.5s ease;
+	padding-right: 9px;
+}
+.social-icons a:hover {
+	opacity: 0.7;
+	color: #303133;
+}
+
+.social-icons .fa-inverse {
+	color: #303133;
+}
+
+.footer-payment-image {
+	filter: grayscale(1);
+}
+
+/* ------ Copyright Styles ------ */
+.footer-copyright {
+	background-color: #f7f7f7;
+	font-size: 0.8rem;
+	color: #303133;
+}
+
+.footer-copyright a {
+	color: #303133;
+	transition: all 0.5s ease;
+}
+
+.footer-copyright a:hover {
+	color: #303133;
+	opacity: 0.7;
+}
+
+/* ====== Page Specific overrides ====== */
+
+.home-section {
+	margin: 5rem 0rem;
+}
+
+/* ====== Addons ====== */
+
+/* ------ Image Carousel ------ */
+.carousel-item img{
+	min-height: 300px;
+    object-fit: cover;
+}
+
+/* ------ Callouts ------ */
+
+.callout-content {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+}
+.callout-content a {
+	width:100%;
+}
+
+/* ------ Account Manager ------ */
+
+.AMloggedin {
+	background-color:#303133;  /* highlight colour on logged in customer - default #303133 */
+	color: #fff;
+}
+
+/* ------ Product Carousels and Banner ------ */
+.swiper {
+	width: 100%;
+	height: auto;
+}
+
+.swiper-prev-icon, .swiper-next-icon {
+    position: absolute;
+    top: 50%;
+    margin-top: calc(0px - (var(--swiper-navigation-size)/ 2));
+    z-index: 10;
+    cursor: pointer;
+}
+
+.swiper-prev-icon {
+	left: -17px;
+}
+
+.swiper-next-icon {
+	right: -17px;
+}
+
+.swiper-slide img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* ------ Category Header Text amd Images ------ */
+
+.category-header-text-left {
+	position: absolute;
+	top: 2%;
+	left: 20px;
+	right:50%;
+}
+
+.category-header-text-right {
+	position: absolute;
+	top: 2%;
+	right: 20px;
+	left:50%;
+}
+
+.category-header-text-center {
+	position: absolute;
+	top: 2%;
+	left: 25%;
+	right: 25%;
+}
+
+.category-header-text-span {
+	position: absolute;
+	top: 2%;
+	left: 20px;
+	right: 20px;
+}
+
+.category-header-image {
+	object-fit: cover;
+	min-height: 250px;
+}
+
+/* ------ Was Price ------ */
+
+.productListWas {
+	margin-bottom: 0.25rem;
+}
+
+.wasPriceText {
+	color: #DD0000;
+	/*text-decoration: line-through;*/
+}
+
+.saveText {
+	color: #DD0000;
+	/*font-weight: 600;*/
+}
+.saveText:before {
+	content:"(";
+}
+.saveText:after {
+	content:")";
+}
+
+/* ====== Customer Specific Custom ====== */
+
+.product-code {
+	font-size: 1.5rem;
+}
+
+#ajaxSummaryCart > i.fa.d-none.d-lg-inline.fa-flip-horizontal.fa-shopping-cart.shopping-cart-off {
+	color: #303133 !important;
+}
+
+.brands-heading:before {
+	display: block;
+    white-space: pre;
+    content: 'Our Brands:';
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.125em;
+    text-align: left;
+    line-height: 1em;
+    font-family: 'Akrobat-Bold';
+}
+
+
+.footer-navigation h2 {
+	font-size: 50px;
+}
+
+.footer-column-4 h3 {
+	margin: 2rem 0rem;
+	font-size: 30px;
+}
+
+.footer-column-4 p {
+	margin-bottom: 0px;
+}
+
+@media (min-width: 1800px) {
+	.d-xxxl-block {
+		display: block !important;
+	}
+}
+
+/* Search Suggestions */
+
+.searchSuggestionPane {
+	width: 100%;
+	padding: 0px;
+	max-height: 65vh !important;
+}
+
+.searchSuggestionPane li {
+	margin: 10px 0px;
+}
+
+.suggestion-thumb {
+	width: 25%;
+    float: left;
+    text-align: center;
+    margin-left: 10px;
+    margin-right: 15px;
+}
+
+.suggestion-thumb img{
+	object-fit:contain;
+	max-width:100%;
+	max-height:60px;
+}
+
+.suggestion-text {
+	white-space:normal;
+	width:75%;
+	float:right;
+}
+
+.suggestion-name {
+	font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.suggestion-code {
+	font-size: 1.1rem;
+	color: #212529;
+}
+
+.suggestion-price {
+	color: #212529;
+	font-weight: 600;
+	font-size: 1.1rem;
+}
+
+.view-all {
+	background-color: #6d3d4e;
+	text-align: center;
+	padding: .5rem 0rem;
+	transition: all 0.5s ease;
+}
+
+.view-all a {
+	color: #fff;
+}
+
+.view-all:hover {
+	background-color: #555555;
+}

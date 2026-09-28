@@ -1,0 +1,3 @@
+# Demo copy of superiorbrass.com.au for the support-chat prototype — keep it out of search engines.
+User-agent: *
+Disallow: /

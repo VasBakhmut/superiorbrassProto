@@ -1,0 +1,113 @@
+/* Superior Brass support chat widget — matches the site's charcoal (#303133) + Akrobat look. */
+:root {
+  --sbc-ink: #303133;
+  --sbc-ink-deep: #141618;
+  --sbc-muted: #595959;
+  --sbc-line: #dfdfdf;
+  --sbc-soft: #f7f7f7;
+  --sbc-white: #ffffff;
+  --sbc-error: #c31d2b;
+  --sbc-font: 'Akrobat-Regular', 'Roboto', system-ui, sans-serif;
+  --sbc-font-bold: 'Akrobat-Bold', 'Roboto', system-ui, sans-serif;
+}
+
+.sbc-launcher, .sbc-panel, .sbc-inline { font-family: var(--sbc-font); box-sizing: border-box; }
+.sbc-panel *, .sbc-inline * { box-sizing: border-box; }
+
+/* ---- floating launcher ---- */
+.sbc-launcher {
+  position: fixed; right: 20px; bottom: 20px; z-index: 10000;
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 18px; border: 0; border-radius: 999px;
+  background: var(--sbc-ink); color: var(--sbc-white);
+  font-family: var(--sbc-font-bold); font-size: 16px; letter-spacing: .02em;
+  box-shadow: 0 6px 20px rgba(0,0,0,.25); cursor: pointer;
+  transition: background .15s ease, transform .15s ease;
+}
+.sbc-launcher:hover { background: var(--sbc-ink-deep); transform: translateY(-1px); }
+.sbc-launcher:focus-visible { outline: 3px solid #9aa0a6; outline-offset: 2px; }
+.sbc-launcher.sbc-open .sbc-launcher-label { display: none; }
+
+/* ---- floating panel ---- */
+.sbc-panel {
+  position: fixed; right: 20px; bottom: 84px; z-index: 10000;
+  width: 380px; max-width: calc(100vw - 32px);
+  height: 560px; max-height: calc(100vh - 110px);
+  background: var(--sbc-white); border-radius: 12px; overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,.28);
+}
+.sbc-panel[hidden] { display: none; }
+.sbc-panel .sbc-shell { height: 100%; }
+
+/* ---- shared shell ---- */
+.sbc-shell { display: flex; flex-direction: column; background: var(--sbc-white); color: var(--sbc-ink); }
+.sbc-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 14px 16px; background: var(--sbc-ink); color: var(--sbc-white);
+}
+.sbc-title { font-family: var(--sbc-font-bold); font-size: 18px; line-height: 1.2; }
+.sbc-subtitle { font-size: 14px; opacity: .8; margin-top: 2px; }
+.sbc-actions { display: flex; gap: 4px; }
+.sbc-icon-btn {
+  width: 32px; height: 32px; border: 0; border-radius: 6px;
+  background: transparent; color: var(--sbc-white); font-size: 20px; line-height: 1; cursor: pointer;
+}
+.sbc-icon-btn:hover { background: rgba(255,255,255,.12); }
+.sbc-body { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+.sbc-messages {
+  flex: 1; overflow-y: auto; padding: 16px; background: var(--sbc-soft);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.sbc-msg {
+  max-width: 85%; padding: 10px 13px; border-radius: 12px;
+  font-size: 15px; line-height: 1.45; white-space: pre-wrap; word-wrap: break-word;
+}
+.sbc-bot { align-self: flex-start; background: var(--sbc-white); border: 1px solid var(--sbc-line); border-bottom-left-radius: 4px; }
+.sbc-user { align-self: flex-end; background: var(--sbc-ink); color: var(--sbc-white); border-bottom-right-radius: 4px; }
+.sbc-error { color: var(--sbc-error); border-color: #f0c4c8; }
+.sbc-error-note { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--sbc-line); color: var(--sbc-error); font-size: 14px; }
+.sbc-typing::after { content: "…"; display: inline-block; animation: sbc-blink 1s steps(3) infinite; }
+@keyframes sbc-blink { 0% { opacity: .2 } 50% { opacity: 1 } 100% { opacity: .2 } }
+
+.sbc-form { border-top: 1px solid var(--sbc-line); padding: 10px 12px 12px; background: var(--sbc-white); }
+.sbc-model { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 14px; color: var(--sbc-muted); }
+.sbc-model select {
+  flex: 1; min-width: 0; padding: 5px 8px; border: 1px solid var(--sbc-line); border-radius: 6px;
+  font: inherit; color: var(--sbc-ink); background: var(--sbc-white);
+}
+.sbc-input-row { display: flex; gap: 8px; align-items: flex-end; }
+.sbc-input {
+  flex: 1; resize: none; padding: 9px 11px; border: 1px solid var(--sbc-line); border-radius: 8px;
+  font: inherit; font-size: 15px; color: var(--sbc-ink); line-height: 1.35; max-height: 120px;
+}
+.sbc-input:focus, .sbc-model select:focus, .sbc-email input:focus { outline: 2px solid var(--sbc-ink); outline-offset: -1px; border-color: transparent; }
+.sbc-send {
+  padding: 9px 16px; border: 0; border-radius: 8px; background: var(--sbc-ink); color: var(--sbc-white);
+  font-family: var(--sbc-font-bold); font-size: 15px; cursor: pointer; white-space: nowrap;
+}
+.sbc-send:hover { background: var(--sbc-ink-deep); }
+.sbc-send:disabled { opacity: .5; cursor: default; }
+
+/* ---- escalation email form ---- */
+.sbc-email {
+  align-self: stretch; display: flex; flex-direction: column; gap: 8px;
+  padding: 12px; background: var(--sbc-white); border: 1px solid var(--sbc-line); border-radius: 10px;
+}
+.sbc-email label { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--sbc-muted); }
+.sbc-email input { padding: 8px 10px; border: 1px solid var(--sbc-line); border-radius: 6px; font: inherit; font-size: 15px; color: var(--sbc-ink); }
+.sbc-email-msg { font-size: 14px; color: var(--sbc-error); }
+.sbc-email-msg:empty { display: none; }
+
+/* ---- product page button ---- */
+/* Uses the site's own .btn .btn-light (same as "Request Info" / "Print"); only match their min-width. */
+.sbc-product-btn { min-width: 120px; }
+
+/* ---- technical support page (inline) ---- */
+.sbc-inline { height: 600px; max-height: 80vh; border: 1px solid var(--sbc-line); border-radius: 12px; overflow: hidden; }
+
+@media (max-width: 480px) {
+  .sbc-panel { right: 8px; left: 8px; width: auto; max-width: none; bottom: 76px; height: calc(100vh - 96px); }
+  .sbc-launcher { right: 12px; bottom: 12px; }
+  .sbc-launcher-label { display: none; }
+}

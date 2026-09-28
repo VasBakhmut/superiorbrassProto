@@ -1,0 +1,9 @@
+# crawler state — local only, not part of the site
+_state.json
+_state_full_backup.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.vercel
