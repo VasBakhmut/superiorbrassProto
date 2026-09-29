@@ -47,7 +47,27 @@
     launcher: "Chat with us",
     close: "Close chat",
     newChat: "New chat",
+    attach: "Attach a photo",
+    removePhoto: "Remove photo",
+    uploading: "Uploading photo…",
+    photoReady: "Photo ready to send",
+    photoAttached: "Photo attached",
+    photoTooBig: "This photo is larger than 8 MB. Please choose a smaller one.",
+    photoBadType: "Please choose a JPEG, PNG, WebP or HEIC photo.",
+    photoUploadFailed: "Couldn't upload the photo. Please try again.",
   };
+
+  // Photo upload limits (must match the backend: POST /chat/upload-image).
+  var MAX_PHOTO_BYTES = 8 * 1024 * 1024;
+  var PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
+  var PHOTO_EXT = /\.(jpe?g|png|webp|heic|heif)$/i; // HEIC often has an empty MIME type on Windows
+
+  function photoProblem(file) {
+    var typeOk = PHOTO_TYPES.indexOf(file.type) !== -1 || (!file.type && PHOTO_EXT.test(file.name));
+    if (!typeOk) return TEXT.photoBadType;
+    if (file.size > MAX_PHOTO_BYTES) return TEXT.photoTooBig;
+    return null;
+  }
 
   // ---------- storage (per-viewer convenience only; must work without it) ----------
   function load(key) {
@@ -85,6 +105,20 @@
       var err = new Error("HTTP " + res.status);
       err.code = body && body.code;
       throw err;
+    });
+  }
+
+  // POST /chat/upload-image (multipart, field "file") -> { url }
+  function uploadPhoto(file) {
+    var formData = new FormData();
+    formData.append("file", file);
+    return fetch(API_URL + "/chat/upload-image", { method: "POST", body: formData }).then(function (res) {
+      if (res.status === 400) { var e = new Error("bad image"); e.photoRejected = true; throw e; }
+      if (!res.ok) return httpError(res);
+      return res.json().then(function (body) {
+        if (!body || !body.url) throw new Error("no url in upload response");
+        return body.url;
+      });
     });
   }
 
@@ -168,7 +202,7 @@
     this.root.appendChild(this.list);
 
     this.addBubble("bot", greetingFor(this.ctx), true);
-    this.state.messages.forEach(function (m) { self.addBubble(m.role, m.text, true); });
+    this.state.messages.forEach(function (m) { self.addBubble(m.role, m.text, true, m.imageUrl); });
 
     this.escalationSlot = el("div", "sbc-escalation-slot");
     this.list.appendChild(this.escalationSlot);
@@ -195,7 +229,32 @@
       });
     }
 
+    // Photo preview (shown above the input once a photo is picked).
+    this.attachment = null; // { file, previewUrl, url, uploading, error }
+    this.attachBar = el("div", "sbc-attach-bar");
+    this.attachBar.hidden = true;
+    form.appendChild(this.attachBar);
+
     var row = el("div", "sbc-input-row");
+
+    this.fileInput = el("input");
+    this.fileInput.type = "file";
+    this.fileInput.accept = "image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif";
+    this.fileInput.hidden = true;
+    this.fileInput.addEventListener("change", function () {
+      var file = self.fileInput.files && self.fileInput.files[0];
+      self.fileInput.value = ""; // allow re-picking the same file
+      if (file) self.pickPhoto(file);
+    });
+    this.attachBtn = el("button", "sbc-attach-btn");
+    this.attachBtn.type = "button";
+    this.attachBtn.title = TEXT.attach;
+    this.attachBtn.setAttribute("aria-label", TEXT.attach);
+    this.attachBtn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 11.5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.6-8.6a3.7 3.7 0 0 1 5.2 5.2l-8.6 8.6a1.8 1.8 0 0 1-2.6-2.6l7.9-7.9"/></svg>';
+    this.attachBtn.addEventListener("click", function () { self.fileInput.click(); });
+    row.appendChild(this.fileInput);
+    row.appendChild(this.attachBtn);
+
     this.input = el("textarea", "sbc-input");
     this.input.rows = 1;
     this.input.maxLength = 2000;
@@ -220,9 +279,20 @@
     this.scroll();
   };
 
-  ChatView.prototype.addBubble = function (role, text, silent) {
+  ChatView.prototype.addBubble = function (role, text, silent, imageUrl) {
+    var self = this;
     var b = el("div", "sbc-msg sbc-" + role);
-    if (role === "bot") setBotText(b, text); else b.textContent = text;
+    if (imageUrl) {
+      var img = el("img", "sbc-msg-img");
+      img.alt = TEXT.photoAttached;
+      img.src = imageUrl;
+      img.addEventListener("load", function () { if (!silent) self.scroll(); });
+      // e.g. HEIC, which most browsers can't display: show a label instead of a broken image.
+      img.addEventListener("error", function () { img.replaceWith(el("div", "sbc-msg-img-label", "📎 " + TEXT.photoAttached)); });
+      b.appendChild(img);
+    }
+    if (role === "bot") setBotText(b, text);
+    else if (text) b.appendChild(el("div", null, text));
     if (this.escalationSlot && this.escalationSlot.parentNode === this.list) this.list.insertBefore(b, this.escalationSlot);
     else this.list.appendChild(b);
     if (!silent) this.scroll();
@@ -231,10 +301,75 @@
 
   ChatView.prototype.scroll = function () { this.list.scrollTop = this.list.scrollHeight; };
 
+  // Upload right away when picked, so the URL is ready by the time the visitor hits Send.
+  ChatView.prototype.pickPhoto = function (file) {
+    var self = this;
+    this.clearPhoto();
+    var problem = photoProblem(file);
+    var att = { file: file, previewUrl: URL.createObjectURL(file), url: null, uploading: !problem, error: problem };
+    this.attachment = att;
+    this.renderAttachment();
+    if (problem) return;
+    uploadPhoto(file).then(function (url) {
+      if (self.attachment !== att) return; // removed or replaced meanwhile
+      att.url = url;
+      att.uploading = false;
+      self.renderAttachment();
+    }).catch(function (err) {
+      if (self.attachment !== att) return;
+      att.uploading = false;
+      att.error = err && err.photoRejected ? TEXT.photoBadType + " (max 8 MB)" : (err && err.code ? errorText(err.code) : TEXT.photoUploadFailed);
+      self.renderAttachment();
+    });
+  };
+
+  ChatView.prototype.clearPhoto = function (keepPreviewUrl) {
+    if (this.attachment && !keepPreviewUrl) URL.revokeObjectURL(this.attachment.previewUrl);
+    this.attachment = null;
+    this.renderAttachment();
+  };
+
+  ChatView.prototype.renderAttachment = function () {
+    var self = this;
+    var att = this.attachment;
+    this.attachBar.innerHTML = "";
+    this.attachBar.hidden = !att;
+    this.updateSendState();
+    if (!att) return;
+
+    var thumb = el("img", "sbc-attach-thumb");
+    thumb.alt = "";
+    thumb.src = att.previewUrl;
+    thumb.addEventListener("error", function () { thumb.replaceWith(el("div", "sbc-attach-thumb sbc-attach-thumb-fallback", "📷")); });
+    this.attachBar.appendChild(thumb);
+
+    var info = el("div", "sbc-attach-info");
+    info.appendChild(el("div", "sbc-attach-name", att.file.name));
+    var status = el("div", "sbc-attach-status" + (att.error ? " sbc-attach-error" : ""),
+      att.error || (att.uploading ? TEXT.uploading : TEXT.photoReady));
+    info.appendChild(status);
+    this.attachBar.appendChild(info);
+
+    var remove = el("button", "sbc-attach-remove", "×");
+    remove.type = "button";
+    remove.title = TEXT.removePhoto;
+    remove.setAttribute("aria-label", TEXT.removePhoto);
+    remove.addEventListener("click", function () { self.clearPhoto(); self.input.focus(); });
+    this.attachBar.appendChild(remove);
+  };
+
+  // Send is blocked while streaming or while a photo is still uploading / failed.
+  ChatView.prototype.updateSendState = function () {
+    var att = this.attachment;
+    var photoBlocking = att && (att.uploading || att.error);
+    this.sendBtn.disabled = this.busy || !!photoBlocking;
+  };
+
   ChatView.prototype.setBusy = function (busy) {
     this.busy = busy;
-    this.sendBtn.disabled = busy;
     this.input.disabled = busy;
+    this.attachBtn.disabled = busy;
+    this.updateSendState();
     if (!busy) this.input.focus();
   };
 
@@ -245,13 +380,18 @@
   ChatView.prototype.send = function () {
     var self = this;
     var text = this.input.value.trim();
-    if (!text || this.busy) return;
+    var att = this.attachment;
+    if (att && (att.uploading || att.error)) return;
+    var imageUrl = att && att.url;
+    if ((!text && !imageUrl) || this.busy) return;
     this.input.value = "";
     this.input.style.height = "auto";
 
-    this.addBubble("user", text);
-    this.state.messages.push({ role: "user", text: text });
+    // Show the local preview in the bubble right away; persist the uploaded URL for reloads.
+    this.addBubble("user", text, false, att ? att.previewUrl : null);
+    this.state.messages.push(imageUrl ? { role: "user", text: text, imageUrl: imageUrl } : { role: "user", text: text });
     this.save();
+    if (att) this.clearPhoto(true);
 
     var bubble = this.addBubble("bot", "");
     bubble.classList.add("sbc-typing");
@@ -262,6 +402,7 @@
     if (this.state.sessionId) body.sessionId = this.state.sessionId;
     var code = this.productCode();
     if (code) body.productCode = code;
+    if (imageUrl) body.imageUrl = imageUrl; // message may be "" when only a photo is sent
 
     // Error event or network failure. Codes come from the stream's error event or a 503 body.
     // If part of the answer already streamed, keep it and append a note instead of discarding it.
@@ -293,7 +434,7 @@
         if (ev.needsEscalation) {
           answer = ev.message || answer;
           setBotText(bubble, answer);
-          self.state.pendingEscalation = { summary: ev.escalationSummary || text, productCode: code };
+          self.state.pendingEscalation = { summary: ev.escalationSummary || text || TEXT.photoAttached, productCode: code };
           self.state.escalated = false;
           self.showEmailForm();
         }
